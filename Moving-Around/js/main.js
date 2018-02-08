@@ -18,7 +18,7 @@ window.onload = function() {
     }
     
     var bouncy;
-    var se
+    var se;
     
     function create() {
         // Create a sprite at the center of the screen using the 'logo' image.
@@ -32,6 +32,7 @@ window.onload = function() {
         // Make it bounce off of the world bounds.
         bouncy.body.collideWorldBounds = true;
         se = game.add.audio('fast_drawing');
+        se.play();
         // Add some text using a CSS style.
         // Center it in X, and position its top 15 pixels from the top of the world.
         var style = { font: "25px Verdana", fill: "#9999ff", align: "center" };
@@ -57,13 +58,13 @@ window.onload = function() {
         }
         if(game.input.keyboard.isDown(Phaser.Keyboard.UP))
         {
-            bouncy.y += 20; 
-            se.volume += 0.1;
+            bouncy.y -= 20; 
+            se.volume -= 0.1;
         }
         if(game.input.keyboard.isDown(Phaser.Keyboard.DOWN))
         {
-            bouncy.y -= 20;
-            se.volume -= 0.1; 
+            bouncy.y += 20;
+            se.volume += 0.1;
         }
     }
 };
