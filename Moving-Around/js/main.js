@@ -14,10 +14,11 @@ window.onload = function() {
     
     function preload() {
         // Load an image and call it 'logo'.
-        game.load.image( 'logo', 'assets/phaser.png' );
+        game.load.image( 'logo', 'assets/penguin.png' );
     }
     
     var bouncy;
+    var se
     
     function create() {
         // Create a sprite at the center of the screen using the 'logo' image.
@@ -30,11 +31,11 @@ window.onload = function() {
         game.physics.enable( bouncy, Phaser.Physics.ARCADE );
         // Make it bounce off of the world bounds.
         bouncy.body.collideWorldBounds = true;
-        
+        se = game.add.audio('fast_drawing');
         // Add some text using a CSS style.
         // Center it in X, and position its top 15 pixels from the top of the world.
         var style = { font: "25px Verdana", fill: "#9999ff", align: "center" };
-        var text = game.add.text( game.world.centerX, 15, "Build something amazing.", style );
+        var text = game.add.text( game.world.centerX, 15, "Move it around using the arrow keys!", style );
         text.anchor.setTo( 0.5, 0.0 );
     }
     
@@ -44,6 +45,25 @@ window.onload = function() {
         // in X or Y.
         // This function returns the rotation angle that makes it visually match its
         // new trajectory.
-        bouncy.rotation = game.physics.arcade.accelerateToPointer( bouncy, game.input.activePointer, 500, 500, 500 );
+        // bouncy.rotation = game.physics.arcade.accelerateToPointer( bouncy, game.input.activePointer, 500, 500, 500 );
+        se.mute = false;
+        if(game.input.keyboard.isDown(Phaser.Keyboard.LEFT))
+        {
+            bouncy.x -= 20;
+        }
+        if(game.input.keyboard.isDown(Phaser.Keyboard.RIGHT))
+        {
+            bouncy.x += 20; 
+        }
+        if(game.input.keyboard.isDown(Phaser.Keyboard.UP))
+        {
+            bouncy.y += 20; 
+            se.volume += 0.1;
+        }
+        if(game.input.keyboard.isDown(Phaser.Keyboard.DOWN))
+        {
+            bouncy.y -= 20;
+            se.volume -= 0.1; 
+        }
     }
 };
