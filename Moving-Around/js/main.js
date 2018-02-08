@@ -15,6 +15,7 @@ window.onload = function() {
     function preload() {
         // Load an image and call it 'logo'.
         game.load.image( 'logo', 'assets/penguin.png' );
+        game.load.audio( 'fast_drawing', 'assests/fast_drawing.mp3')
     }
     
     var bouncy;
