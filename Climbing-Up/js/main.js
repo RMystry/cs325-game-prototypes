@@ -49,7 +49,7 @@ window.onload = function() {
             me.incrementScore();
         }
     }
-    function initPlatforms()
+    function initalPlatforms()
     {
         let me = this,
             bottom = me.game.world.height - me.tileHeight,
@@ -96,7 +96,7 @@ window.onload = function() {
         me.platforms.createMultiple(250, 'floor');
         me.timer = game.time.events.loop(2000, me.addPlatform, me);
         me.spacing = 300;
-        me.initPlatforms();
+        me.initalPlatforms();
         me.createPlayer();
         me.score = 0;
         me.createScore();
