@@ -17,23 +17,6 @@ window.onload = function() {
         game.load.image('floor', 'assets/floor.png');
         game.load.image('player', 'assets/player.png');
     }
-    
-    function create() {
-       let me = this;
-       me.tileWidth = me.cache.getImage('floor').width;
-       me.tileHeight = me.cache.getImage('flooe').height;
-       me.game.stage.backgroundColor = '479cde';
-       me.game.physics.startSystem(Phaser.Physics.ARCADE);
-       me.platforms = me.game.add.group();
-       me.platforms.enableBody = true;
-       me.platforms.createMultiple(250, 'floor');
-       me.timer = game.time.events.loop(2000, me.addPlatform, me);
-       me.spacing = 300;
-       me.initPlatforms();
-       me.createPlayer();
-       me.score = 0;
-       me.createScore();
-    }
     function addTile(x, y)
     {
         let me = this;
@@ -102,6 +85,22 @@ window.onload = function() {
         me.scoreLabel.text = me.score;     
      
     }
+    function create() {
+        let me = this;
+        me.tileWidth = me.cache.getImage('floor').width;
+        me.tileHeight = me.cache.getImage('flooe').height;
+        me.game.stage.backgroundColor = '479cde';
+        me.game.physics.startSystem(Phaser.Physics.ARCADE);
+        me.platforms = me.game.add.group();
+        me.platforms.enableBody = true;
+        me.platforms.createMultiple(250, 'floor');
+        me.timer = game.time.events.loop(2000, me.addPlatform, me);
+        me.spacing = 300;
+        me.initPlatforms();
+        me.createPlayer();
+        me.score = 0;
+        me.createScore();
+     }
     function update() {
         let me = this;
         me.game.physics.arcade.collide(me.player, me.platforms);
