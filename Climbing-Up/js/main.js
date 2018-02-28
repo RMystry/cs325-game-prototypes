@@ -88,7 +88,7 @@ window.onload = function() {
     function create() {
         let me = this;
         me.tileWidth = me.cache.getImage('floor').width;
-        me.tileHeight = me.cache.getImage('flooe').height;
+        me.tileHeight = me.cache.getImage('floor').height;
         me.game.stage.backgroundColor = '479cde';
         me.game.physics.startSystem(Phaser.Physics.ARCADE);
         me.platforms = me.game.add.group();
