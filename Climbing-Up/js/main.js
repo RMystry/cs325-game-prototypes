@@ -104,7 +104,7 @@ window.onload = function() {
     function update() {
         let me = this;
         me.game.physics.arcade.collide(me.player, me.platforms);
-        if(me.player.body.position.y >= me.game.world.height - me.player.body.height){
+        if(me.player.position.y >= me.game.world.height - me.player.height){
             me.gameOver();
         }
         if(game.input.keyboard.isDown(Phaser.Keyboard.LEFT))
