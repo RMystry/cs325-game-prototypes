@@ -10,17 +10,26 @@ window.onload = function() {
     // loading functions to reflect where you are putting the assets.
     // All loading functions will typically all be found inside "preload()".
     
-    let game = new Phaser.Game( 800, 600, Phaser.AUTO, 'game', { preload: preload, create: create, update: update } );
+    let game = new Phaser.Game( 1280, 1280, Phaser.AUTO, 'game', { preload: preload, create: create, update: update } );
+    
     
     function preload() {
         // Load an image and call it 'logo'.
         game.load.image('floor', 'assets/floor.png');
         game.load.image('player', 'assets/player.png');
     }
+    let platforms;
+    let tileWidth;
+    let tileHeight;
+    let player;
+    let timer;
+    let spacing = 500;
+    let scoreLabel;
+    let score;
+
     function addTile(x, y)
     {
-        let me = this;
-        let tile = me.platforms.getFirstDead();
+        let tile = platforms.getFirstDead();
         tile.reset(x, y);
         tile.body.velocity.y = 150;
         tile.body.immovable = true;
@@ -29,95 +38,97 @@ window.onload = function() {
     }
     function addPlatform(y)
     {
-        let me = this;
         if(typeof(y) == "undefined")
         {
-            y = -me.tileHeight;
+            y = -tileHeight;
         }
-        let tilesNeeded = Math.ceil(me.game.world.width / me.tileWidth);
-        let hole = Math.floor(Math.random() * (tilesNeeded - 3)) + 1;
+        let tilesNeeded = Math.ceil(game.world.width / tileWidth);
+        let hole = Math.floor(Math.random() * (tilesNeeded - 1));
         for(let i = 0; i < tilesNeeded; i++)
         {
-            if(i != hole && i != hole + 1)
+            if(i != hole)
             {
-                me.addTile(i * me.tileWidth, y);
+                addTile(i * tileWidth, y);
             }
         }
         if(typeof(y) == "undefined"){
-            y = -me.tileHeight;
-            //Increase the players score
-            me.incrementScore();
+            y = -tileHeight;
         }
+        //incrementScore();
     }
     function initalPlatforms()
     {
-        let me = this,
-            bottom = me.game.world.height - me.tileHeight,
-            top = me.tileHeight;
-        for(let y = bottom; y > top - me.tileHeight; y = y - me.spacing)
+        let tileWidth = game.cache.getImage('floor').width;
+        let tileHeight = game.cache.getImage('player').height;
+        let bottom = game.world.height - tileHeight,
+            top = tileHeight;
+        for(let y = bottom; y > top - tileHeight; y = y - spacing)
         {
-            me.addplatform(y);
+            addPlatform(y);
         }
     }
     function createPlayer()
     {
-        let me = this;
-        me.player = me.game.add.sprite(me.game.world.centerX, me.game.world.height - (me.spacing * 2 + (3 * me.tileHeight)), 'player');
-        me.player.anchor.setTo(0.5, 1.0);
-        me.game.physics.arcade.enable(me.player);
-        me.player.body.gravity.y = 2000;
-        me.player.body.collideWorldBounds = true;
-        me.player.body.bounce.y = 0.1;
+        let player = game.add.sprite(game.world.centerX, game.world.height - (spacing * 2 + (3 * tileHeight)), 'player');
+        player.anchor.setTo(0.5, 1.0);
+        game.physics.arcade.enable(player);
+        player.enableBody = true;
+        player.physicsBodyType = Phaser.Physics.Arcade;
+        player.body.gravity.y = 2000;
+        player.body.collideWorldBounds = true;
+        player.body.bounce.y = 0.1;
     }
     function createScore()
     {
-        let me = this;
         let scoreFont = "100px Arial";
-        me.scoreLabel = me.game.add.text((me.game.world.centerX), 100, "0", {font: scoreFont, fill: "#fff"});
-        me.scoreLabel.anchor.setTo(0.5, 0.5);
-        me.scoreLabel.align = 'center';
+
+        scoreLabel.anchor.setTo(0.5, 0.5);
+        scoreLabel.align = 'center';
     }
     function incrementScore(){
- 
-        var me = this;
 
-        me.score += 1;  
-        me.scoreLabel.text = me.score;     
+        score += 1;  
+       scoreLabel.text =score;     
      
     }
     function create() {
-        let me = this;
-        me.tileWidth = me.cache.getImage('floor').width;
-        me.tileHeight = me.cache.getImage('floor').height;
-        me.game.stage.backgroundColor = '479cde';
-        me.game.physics.startSystem(Phaser.Physics.ARCADE);
-        me.platforms = me.game.add.group();
-        me.platforms.enableBody = true;
-        me.platforms.createMultiple(250, 'floor');
-        me.timer = game.time.events.loop(2000, me.addPlatform, me);
-        me.spacing = 300;
-        me.initalPlatforms();
-        me.createPlayer();
-        me.score = 0;
-        me.createScore();
+       tileWidth = game.cache.getImage('floor').width;
+       tileHeight = game.cache.getImage('player').height;
+       game.stage.backgroundColor = '479cde';
+       game.physics.startSystem(Phaser.Physics.ARCADE);
+       platforms = game.add.group();
+       platforms.enableBody = true;
+       platforms.createMultiple(250, 'floor');
+       timer = game.time.events.loop(4000,addPlatform, this);
+       initalPlatforms();
+       player = game.add.sprite(game.world.centerX, game.world.height - (spacing * 2 + (3 * tileHeight)), 'player');
+       player.anchor.setTo(0.5, 1.0);
+       game.physics.arcade.enable(player);
+       player.enableBody = true;
+       player.physicsBodyType = Phaser.Physics.Arcade;
+       player.body.gravity.y = 2000;
+       player.body.collideWorldBounds = true;
+       player.body.bounce.y = 0.1;
+       score = 0;
+     //  createScore();
      }
     function update() {
-        let me = this;
-        me.game.physics.arcade.collide(me.player, me.platforms);
-        if(me.player.y >= me.game.world.height - me.player.height){
-            me.gameOver();
+        
+        game.physics.arcade.collide(player,platforms);
+        if(player.body.y >=game.world.height -player.body.height){
+            preload();
         }
         if(game.input.keyboard.isDown(Phaser.Keyboard.LEFT))
         {
-            me.player.body.velocity.x += -30;
+           player.body.velocity.x += -30;
         }
         if(game.input.keyboard.isDown(Phaser.Keyboard.RIGHT))
         {
-            me.player.body.velocity.x += 30;
+           player.body.velocity.x += 30;
         }
-        if(game.input.keyboard.isDown(Phaser.Keyboard.UP) && me.player.body.wasTouching.down)
+        if(game.input.keyboard.isDown(Phaser.Keyboard.UP) && player.body.wasTouching.down)
         {
-            me.player.body.velocity.y = -1400;
+           player.body.velocity.y = -1700;
         }
     }
 };
