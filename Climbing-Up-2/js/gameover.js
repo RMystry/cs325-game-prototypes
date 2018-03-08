@@ -7,7 +7,7 @@ GameOver.prototype = {
 	},
 
 	restartGame: function(){
-		this.game.state.start("Main");
+		this.game.state.start("GameTitle");
 	}
 	
 }

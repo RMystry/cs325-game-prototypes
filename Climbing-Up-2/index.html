@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Hello! Amaze!</title>
+    <script src="js/phaser.js"></script>
+    <script src="js/main.js"></script>
+
+<style>
+body
+{
+    color: #777;
+    font-family: "Avenir", Verdana, sans-serif;
+}
+#readme
+{
+    margin-top: 10px;
+}
+</style>
+
+</head>
+<body>
+<div id="game"></div>
+<div id="readme">
+<h2>Climbing Up</h2>
+
+<ul>
+<li><strong>Originality:</strong>
+What is original about your game?
+just a classic climber
+</li>
+
+<li><strong>Technical Merit:</strong>
+What is interesting about your game technology?
+infinite spawning
+</li>
+
+<li><strong>Prototype Postmortem:</strong>
+What did you learn from this prototype?
+i learned how to create an infite scroller game.
+What was the easiest or hardest part of making it?
+i think the easiest part was making the player move adn the hardest part was trying to sunc up the platforms so there was enough space to move 
+</li>
+
+<li><strong>Prototype Assets:</strong>
+Did you make your prototype assets from scratch? Did you borrow them? Cite your sources here.
+<ul>
+<li>platform image: <a href="http://3.bp.blogspot.com/-sRjjG6i1f48/UKdHmcOMwtI/AAAAAAAADPM/Ga7HeGO58nY/s1600/texture_of_ice-background_for_websites.jpg">Platforms</a></li>
+<li>player image: <a href="data:image/jpeg;base64,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">Player</a></li>
+</ul>
+</li>
+
+<li><strong>Prototype Closest Other Game:</strong>
+Which other game most closely resembles your game? If you are borrowing code from a Phaser Example, you must say so here. If you borrow code from elsewhere, you must say so here.
+used this tutorial to give me the outline to understand how to create the levels make the game: https://www.joshmorony.com/how-to-create-an-infinite-climbing-game-in-phaser/
+</li>
+
+<li><strong>High Concept:</strong>
+
+you are a chill bear climbing up the ice :)
+</li>
+
+<li><strong>Theme:</strong>
+
+I used the ice theme to create the platforms
+</li>
+
+<li><strong>Mandated Variety:</strong>
+State which input, randomness, genre, and play style you used in this prototype.
+infinite scroller
+</li>
+
+<li><strong>Prototype Goal:</strong>
+What game mechanic is this prototype evaluating?
+the jumping mechanics and infinite creation of platform
+</li>
+
+<li><strong>Player Experience Goals:</strong>
+What experience do you want players to have when playing your game?
+just a chill infinite platformer
+</li>
+
+<li><strong>Gameplay:</strong>
+jumping and moving around to climb up the platforms
+</li>
+
+<li><strong>Strategies:</strong>
+What player strategies do you expect will be effective at playing this game?
+looking ahead to make sure that they don't get caught off guard
+</li>
+
+<li><strong>Story/Setting/Premise:</strong>
+your just a chill bear climbing up for fun 
+</li>
+
+<li><strong>Target Audience:</strong>
+A single sentence that describes the demographic you're trying to reach.
+</li>
+
+<li><strong>Play Time:</strong>
+this all dpened on how good you are
+</li>
+
+</ul>
+
+</div>
+</body>
+</html>

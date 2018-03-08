@@ -10,7 +10,7 @@ window.onload = function() {
     // loading functions to reflect where you are putting the assets.
     // All loading functions will typically all be found inside "preload()".
     
-    let game = new Phaser.Game( 1280, 1280, Phaser.AUTO, 'game', { preload: preload, create: create, update: update } );
+    let game = new Phaser.Game( 600, 900, Phaser.AUTO, 'game', { preload: preload, create: create, update: update } );
     
     
     function preload() {
@@ -23,7 +23,7 @@ window.onload = function() {
     let tileHeight;
     let player;
     let timer;
-    let spacing = 500;
+    let spacing = 300;
     let scoreLabel;
     let score;
 
@@ -43,18 +43,18 @@ window.onload = function() {
             y = -tileHeight;
         }
         let tilesNeeded = Math.ceil(game.world.width / tileWidth);
-        let hole = Math.floor(Math.random() * (tilesNeeded - 1));
+        let hole = Math.floor(Math.random() * ((tilesNeeded - 3)) + 1);
         for(let i = 0; i < tilesNeeded; i++)
         {
-            if(i != hole)
+            if(i != hole && i != hole + 1)
             {
                 addTile(i * tileWidth, y);
             }
         }
         if(typeof(y) == "undefined"){
             y = -tileHeight;
+            incrementScore();
         }
-        //incrementScore();
     }
     function initalPlatforms()
     {
@@ -80,43 +80,43 @@ window.onload = function() {
     }
     function createScore()
     {
-        let scoreFont = "100px Arial";
-
+        var scoreFont = "100px Arial";
+        scoreLabel = game.add.text((game.world.centerX), 100, "0", {font: scoreFont, fill: "#fff"});
         scoreLabel.anchor.setTo(0.5, 0.5);
         scoreLabel.align = 'center';
     }
     function incrementScore(){
 
         score += 1;  
-       scoreLabel.text =score;     
+        scoreLabel.text = score;     
      
     }
     function create() {
-       tileWidth = game.cache.getImage('floor').width;
-       tileHeight = game.cache.getImage('player').height;
-       game.stage.backgroundColor = '479cde';
-       game.physics.startSystem(Phaser.Physics.ARCADE);
-       platforms = game.add.group();
-       platforms.enableBody = true;
-       platforms.createMultiple(250, 'floor');
-       timer = game.time.events.loop(4000,addPlatform, this);
-       initalPlatforms();
-       player = game.add.sprite(game.world.centerX, game.world.height - (spacing * 2 + (3 * tileHeight)), 'player');
-       player.anchor.setTo(0.5, 1.0);
-       game.physics.arcade.enable(player);
-       player.enableBody = true;
-       player.physicsBodyType = Phaser.Physics.Arcade;
-       player.body.gravity.y = 2000;
-       player.body.collideWorldBounds = true;
-       player.body.bounce.y = 0.1;
-       score = 0;
-     //  createScore();
+        tileWidth = game.cache.getImage('floor').width;
+        tileHeight = game.cache.getImage('player').height;
+        game.stage.backgroundColor = '479cde';
+        game.physics.startSystem(Phaser.Physics.ARCADE);
+        platforms = game.add.group();
+        platforms.enableBody = true;
+        platforms.createMultiple(250, 'floor');
+        timer = game.time.events.loop(2000,addPlatform, this);
+        initalPlatforms();
+        player = game.add.sprite(game.world.centerX, game.world.height - (spacing * 2 + (3 * tileHeight)), 'player');
+        player.anchor.setTo(0.5, 1.0);
+        game.physics.arcade.enable(player);
+        player.enableBody = true;
+        player.physicsBodyType = Phaser.Physics.Arcade;
+        player.body.gravity.y = 2000;
+        player.body.collideWorldBounds = true;
+        player.body.bounce.y = 0.1;
+        score = 0;
+        createScore();
      }
     function update() {
         
         game.physics.arcade.collide(player,platforms);
         if(player.body.y >=game.world.height -player.body.height){
-            preload();
+            GameOver();
         }
         if(game.input.keyboard.isDown(Phaser.Keyboard.LEFT))
         {
@@ -128,7 +128,7 @@ window.onload = function() {
         }
         if(game.input.keyboard.isDown(Phaser.Keyboard.UP) && player.body.wasTouching.down)
         {
-           player.body.velocity.y = -1700;
+           player.body.velocity.y = -1400;
         }
     }
-}
+};
