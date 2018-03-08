@@ -10,7 +10,7 @@ window.onload = function() {
     // loading functions to reflect where you are putting the assets.
     // All loading functions will typically all be found inside "preload()".
     
-    let game = new Phaser.Game( 600, 900, Phaser.AUTO, 'game', { preload: preload, create: create, update: update } );
+    let game = new Phaser.Game( 1280, 1280, Phaser.AUTO, 'game', { preload: preload, create: create, update: update } );
     
     
     function preload() {
@@ -43,7 +43,7 @@ window.onload = function() {
             y = -tileHeight;
         }
         let tilesNeeded = Math.ceil(game.world.width / tileWidth);
-        let hole = Math.floor(Math.random() * ((tilesNeeded - 3)) + 1);
+        let hole = Math.floor(Math.random() * (tilesNeeded - 3)) + 1;
         for(let i = 0; i < tilesNeeded; i++)
         {
             if(i != hole && i != hole + 1)
