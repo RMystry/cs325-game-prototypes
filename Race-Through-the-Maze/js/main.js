@@ -1,6 +1,4 @@
-"use strict";
 
-window.onload = function() {
     var cols, rows;
     var scl = 40;
     var grid = [];
@@ -227,4 +225,3 @@ window.onload = function() {
       plyaer2 = grid[24];
       finish = grid[index(14,14)];
     }
-};
