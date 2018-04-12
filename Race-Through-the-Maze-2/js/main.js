@@ -46,6 +46,7 @@
       player.visible();
       player2.visible2();
       finish.visibleF();
+      switchplay.visibleS();
       
       
       active.checked = true;
@@ -133,6 +134,15 @@
           fill(240, 40, 30);
           rect(x+5,y+5,scl-10,scl-10);
         }
+        this.visibleS = function() {
+          if (allChecked()) {
+            var x = this.i*scl;
+            var y = this.j*scl;
+      
+            noStroke();
+            fill(40, 40, 30);
+            rect(x+5,y+5,scl-10,scl-10);
+          }
         }
         this.visibleF = function() {
         if (allChecked()) {
@@ -214,12 +224,14 @@
         var temp2 = player.j;
         player = grid[index(player2.i, player2.j)];
         player2 = grid[index(temp1,temp2)];
+        switchplay = grid[10];
       }
       if (player2 === switchplay) {
         var temp1 = player2.i;
         var temp2 = player2.j;
         player2 = grid[index(player.i, player.j)];
         player = grid[index(temp1, temp2)];
+        switchplay = grid[10];
       }
     }
     
