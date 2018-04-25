@@ -104,7 +104,7 @@ window.onload = function() {
         game.time.events.add(1000, launchGreenEnemy);
     
         //  Blue enemy's bullets
-        blueEnemyBullets = game.add.group();
+        var blueEnemyBullets = game.add.group();
         blueEnemyBullets.enableBody = true;
         blueEnemyBullets.physicsBodyType = Phaser.Physics.ARCADE;
         blueEnemyBullets.createMultiple(30, 'blueEnemyBullet');
@@ -131,7 +131,7 @@ window.onload = function() {
             enemy.damageAmount = 40;
         });
         //yellow enemy's bullets
-        yellowEnemyBullets = game.add.group();
+        var yellowEnemyBullets = game.add.group();
         yellowEnemyBullets.enableBody = true;
         yellowEnemyBullets.physicsBodyType = Phaser.Physics.ARCADE;
         yellowEnemyBullets.createMultiple(30, 'blueEnemyBullet');
