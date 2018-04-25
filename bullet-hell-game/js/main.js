@@ -10,7 +10,7 @@ window.onload = function() {
     // loading functions to reflect where you are putting the assets.
     // All loading functions will typically all be found inside "preload()".
     
-    var game = new Phaser.Game(800,600, Phaser.AUTO, 'phaser-demo', {preload: preload, create: create, update: update, render: render});
+    var game = new Phaser.Game(800,600, Phaser.AUTO, 'phaser-demo', {preload: preload, create: create, update: update, redner: render});
 
     var player;
     var greenEnemies;
@@ -33,23 +33,27 @@ window.onload = function() {
     var greenEnemySpacing = 1000;
     var blueEnemyLaunchTimer;
     var blueEnemyLaunched = false;
+    var blueEnemyBullets;
     var yellowEnemyLaunchTimer;
     var yellowEnemyLaunched = false;
+    var yellowEnemyBullets;
     var gameOver;
+    var tapRestart;
+    var spaceRestart;
     
     var ACCLERATION = 600;
     var DRAG = 400;
     var MAXSPEED = 400;
     
     function preload() {
-        game.load.image('starfield', 'https://raw.githubusercontent.com/jschomay/phaser-demo-game/master/assets/starfield.png');
-        game.load.image('ship', 'assets/player.jpg');
-        game.load.image('bullet', 'https://raw.githubusercontent.com/jschomay/phaser-demo-game/master/assets/bullet.png');
-        game.load.image('enemy-green', 'https://raw.githubusercontent.com/jschomay/phaser-demo-game/master/assets/enemy-green.png');
-        game.load.image('enemy-blue', 'assets/red-Ship.jpg');
-        game.load.image('blueEnemyBullet', 'https://raw.githubusercontent.com/jschomay/phaser-demo-game/master/assets/enemy-blue-bullet.png');
-        game.load.spritesheet('explosion', 'https://raw.githubusercontent.com/jschomay/phaser-demo-game/master/assets/explode.png', 128, 128);
-        game.load.bitmapFont('spacefont', 'https://raw.githubusercontent.com/jschomay/phaser-demo-game/master/assets/spacefont/spacefont.png', 'https://rawgit.com/jschomay/phaser-demo-game/master/assets/spacefont/spacefont.xml');
+        game.load.image('starfield', 'assets/starfield.png');
+        game.load.image('ship', 'assets/player.png');
+        game.load.image('bullet', 'assets/bullet.png');
+        game.load.image('enemy-green', 'assets/enemy-green.png');
+        game.load.image('enemy-blue', 'assets/red-Ship.png');
+        game.load.image('blueEnemyBullet', 'assets/enemy-blue-bullet.png');
+        game.load.spritesheet('explosion', 'explode.png', 128, 128);
+        game.load.bitmapFont('spacefont', 'assets/spacefont.png', 'assets/spacefont.xml');
         game.load.image('yellow-enemy', 'assets/yellow-enemy.png');  
     }
     
@@ -104,7 +108,7 @@ window.onload = function() {
         game.time.events.add(1000, launchGreenEnemy);
     
         //  Blue enemy's bullets
-        var blueEnemyBullets = game.add.group();
+        blueEnemyBullets = game.add.group();
         blueEnemyBullets.enableBody = true;
         blueEnemyBullets.physicsBodyType = Phaser.Physics.ARCADE;
         blueEnemyBullets.createMultiple(30, 'blueEnemyBullet');
@@ -131,7 +135,7 @@ window.onload = function() {
             enemy.damageAmount = 40;
         });
         //yellow enemy's bullets
-        var yellowEnemyBullets = game.add.group();
+        yellowEnemyBullets = game.add.group();
         yellowEnemyBullets.enableBody = true;
         yellowEnemyBullets.physicsBodyType = Phaser.Physics.ARCADE;
         yellowEnemyBullets.createMultiple(30, 'blueEnemyBullet');
@@ -269,8 +273,12 @@ window.onload = function() {
     
         game.physics.arcade.overlap(player, blueEnemies, shipCollide, null, this);
         game.physics.arcade.overlap(bullets, blueEnemies, hitEnemy, null, this);
+
+        game.physics.arcade.overlap(player, yellowEnemies, shipCollide, null, this);
+        game.physics.arcade.overlap(bullets, yellowEnemies, hitEnemy, null, this);
     
         game.physics.arcade.overlap(blueEnemyBullets, player, enemyHitsPlayer, null, this);
+        game.physics.arcade.overlap(yellowEnemyBullets, player, enemyHitsPlayer, null, this);
     
         //  Game over?
         if (! player.alive && gameOver.visible === false) {
@@ -354,7 +362,7 @@ window.onload = function() {
             case 3:
             if (game.time.now > bulletTimer) {
                 var BULLET_SPEED = 400;
-                var BULLET_SPACING = 550;
+                var BULLET_SPACING = 250;
     
     
                 for (var i = 0; i < 5; i++) {
@@ -412,7 +420,7 @@ window.onload = function() {
         greenEnemyLaunchTimer = game.time.events.add(game.rnd.integerInRange(greenEnemySpacing, greenEnemySpacing + 1000), launchGreenEnemy);
     }
     function launchYellowEnemy() {
-        var ENEMY_SPEED = 300;
+        var ENEMY_SPEED = 100;
     
         var enemy = yellowEnemies.getFirstExists(false);
         if (enemy) {
@@ -425,10 +433,10 @@ window.onload = function() {
             enemy.update = function(){
               enemy.angle = 180 - game.math.radToDeg(Math.atan2(enemy.body.velocity.x, enemy.body.velocity.y));
               var bulletSpeed = 800;
-              var firingDelay = 1000;
+              var firingDelay = 500;
               enemy.bullets = 5;
               enemy.lastShot = 0;
-              enemyBullet = blueEnemyBullets.getFirstExists(false);
+              var enemyBullet = blueEnemyBullets.getFirstExists(false);
               if (enemyBullet &&
                   this.alive &&
                   this.bullets &&
@@ -450,7 +458,7 @@ window.onload = function() {
         }
     
         //  Send another enemy soon
-        greenEnemyLaunchTimer = game.time.events.add(game.rnd.integerInRange(greenEnemySpacing * 2, greenEnemySpacing + 4000), launchYellowEnemy);
+        yellowEnemyLaunchTimer = game.time.events.add(game.rnd.integerInRange(greenEnemySpacing * 2, greenEnemySpacing + 4000), launchYellowEnemy);
     }
     function launchBlueEnemy() {
         var startingX = game.rnd.integerInRange(100, game.width - 100);
@@ -486,7 +494,7 @@ window.onload = function() {
                   this.angle = 180 - bank * 2;
     
                   //  Fire
-                  enemyBullet = blueEnemyBullets.getFirstExists(false);
+                  var enemyBullet = blueEnemyBullets.getFirstExists(false);
                   if (enemyBullet &&
                       this.alive &&
                       this.bullets &&
@@ -567,12 +575,18 @@ window.onload = function() {
           //  Slow green enemies down now that there are other enemies
           greenEnemySpacing *= 2;
         }
+        if (!yellowEnemyLaunched && score > 10000) {
+            yellowEnemyLaunched = true;
+            launchYellowEnemy();
+          }
         //  Weapon upgrade
         if (score >= 4000 && player.weaponLevel < 2) {
           player.weaponLevel = 2;
+          player.health += 40;
         }
         if (score >= 10000 && player.weaponLevel < 3) {
             player.weaponLevel = 3;
+            player.health += 100;
           }
     }
     
