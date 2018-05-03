@@ -42,7 +42,8 @@ window.onload = function() {
     var spaceRestart;
     var healthPickup;
     var bulletRain;
-    
+    var timeDelay;
+    var temp;
     var ACCLERATION = 600;
     var DRAG = 400;
     var MAXSPEED = 400;
@@ -56,7 +57,9 @@ window.onload = function() {
         game.load.image('blueEnemyBullet', 'assets/enemy-blue-bullet.png');
         game.load.spritesheet('explosion', 'assests/explode.png', 128, 128);
         game.load.bitmapFont('spacefont', 'assets/spacefont.png', 'assets/spacefont.xml');
-        game.load.image('yellow-enemy', 'assets/yellow-enemy.png');  
+        game.load.image('yellow-enemy', 'assets/yellow-enemy.png');
+        game.load.image('health-Pickup', 'assets/health.png');  
+        game.load.image('bullet-Rain', 'assets/bulletPickup.png');    
     }
     
     function create() {
@@ -67,7 +70,7 @@ window.onload = function() {
         bullets = game.add.group();
         bullets.enableBody = true;
         bullets.physicsBodyType = Phaser.Physics.ARCADE;
-        bullets.createMultiple(30, 'bullet');
+        bullets.createMultiple(1000, 'bullet');
         bullets.setAll('anchor.x', 0.5);
         bullets.setAll('anchor.y', 1);
         bullets.setAll('outOfBoundsKill', true);
@@ -80,7 +83,7 @@ window.onload = function() {
         game.physics.enable(player, Phaser.Physics.ARCADE);
         player.body.maxVelocity.setTo(MAXSPEED, MAXSPEED);
         player.body.drag.setTo(DRAG, DRAG);
-        player.weaponLevel = 1
+        player.weaponLevel = 1;
         player.events.onKilled.add(function(){
             shipTrail.kill();
         });
@@ -162,6 +165,30 @@ window.onload = function() {
         yellowEnemies.setAll('angle', 180);
         yellowEnemies.forEach(function(enemy){
             enemy.damageAmount = 30;
+        });
+        healthPickup = game.add.group();
+        healthPickup.enableBody = true;
+        healthPickup.physicsBodyType = Phaser.Physics.ARCADE;
+        healthPickup.createMultiple(30, 'health-Pickup');
+        healthPickup.setAll('anchor.x', 0.5);
+        healthPickup.setAll('anchor.y', 0.5);
+        healthPickup.setAll('scale.x', 0.5);
+        healthPickup.setAll('scale.y', 0.5);
+        healthPickup.setAll('angle', 180);
+        healthPickup.forEach(function(enemy){
+            enemy.damageAmount = 15;
+        });
+        bulletRain = game.add.group();
+        bulletRain.enableBody = true;
+        bulletRain.physicsBodyType = Phaser.Physics.ARCADE;
+        bulletRain.createMultiple(30, 'bullet-Rain');
+        bulletRain.setAll('anchor.x', 0.5);
+        bulletRain.setAll('anchor.y', 0.5);
+        bulletRain.setAll('scale.x', 0.5);
+        bulletRain.setAll('scale.y', 0.5);
+        bulletRain.setAll('angle', 180);
+        bulletRain.forEach(function(enemy){
+            enemy.damageAmount = 5;
         });
 
       
@@ -250,6 +277,7 @@ window.onload = function() {
         //  Fire bullet
         if (player.alive && (fireButton.isDown || game.input.activePointer.isDown)) {
             fireBullet();
+            
         }
     
         //  Move ship towards mouse pointer
@@ -282,7 +310,10 @@ window.onload = function() {
     
         game.physics.arcade.overlap(blueEnemyBullets, player, enemyHitsPlayer, null, this);
         game.physics.arcade.overlap(yellowEnemyBullets, player, enemyHitsPlayer, null, this);
-    
+
+        game.physics.arcade.overlap(player, healthPickup, healthCollide, null, this);
+        game.physics.arcade.overlap(player, bulletRain, wCollide, null, this);
+
         //  Game over?
         if (! player.alive && gameOver.visible === false) {
             gameOver.visible = true;
@@ -405,8 +436,8 @@ window.onload = function() {
                         if (i === 0) spreadAngle = -10;
                         if (i === 1) spreadAngle = 0;
                         if (i === 2) spreadAngle = 10;
-                        if (i === 3) spreadAngle = -15;
-                        if (i === 4) spreadAngle = 15;
+                        if (i === 3) spreadAngle = -20;
+                        if (i === 4) spreadAngle = 20;
                         bullet.angle = player.angle + spreadAngle;
                         game.physics.arcade.velocityFromAngle(spreadAngle - 90, BULLET_SPEED, bullet.body.velocity);
                         bullet.body.velocity.x += player.body.velocity.x;
@@ -549,7 +580,56 @@ window.onload = function() {
         //  Send another wave soon
         blueEnemyLaunchTimer = game.time.events.add(game.rnd.integerInRange(timeBetweenWaves, timeBetweenWaves + 4000), launchBlueEnemy);
     }
+    function luanchHealthPickups()
+    {
+        var ENEMY_SPEED = 300;
+        var hPickupTimer;
+        var enemy = healthPickup.getFirstExists(false);
+        if (enemy) {
+            enemy.reset(game.rnd.integerInRange(0, game.width), -20);
+            enemy.body.velocity.x = game.rnd.integerInRange(-300, 300);
+            enemy.body.velocity.y = ENEMY_SPEED;
+            enemy.body.drag.x = 100;
     
+
+    
+            //  Update function for each enemy ship to update rotation etc
+            enemy.update = function(){
+              enemy.x = 200;
+              //  Kill enemies once they go off screen
+              if (enemy.y > game.height + 200) {
+                enemy.kill();
+                enemy.y = -20;
+              }
+            }
+        }
+        hPickupTimer = game.time.events.add(game.rnd.integerInRange(5000, 20000), luanchHealthPickups);
+    }
+    function luanchWeaponPickups()
+    {
+        var ENEMY_SPEED = 300;
+        var wPickupTimer;
+        var enemy = bulletRain.getFirstExists(false);
+        if (enemy) {
+            enemy.reset(game.rnd.integerInRange(0, game.width), -20);
+            enemy.body.velocity.x = game.rnd.integerInRange(-300, 300);
+            enemy.body.velocity.y = ENEMY_SPEED;
+            enemy.body.drag.x = 100;
+    
+    
+            //  Update function for each enemy ship to update rotation etc
+            enemy.update = function(){
+              enemy.x = 700 - Math.atan2(enemy.body.velocity.x, enemy.body.velocity.y);
+    
+    
+              //  Kill enemies once they go off screen
+              if (enemy.y > game.height + 200) {
+                enemy.kill();
+                enemy.y = -20;
+              }
+            }
+        }
+    }
     function addEnemyEmitterTrail(enemy) {
         var enemyTrail = game.add.emitter(enemy.x, player.y - 10, 100);
         enemyTrail.width = 10;
@@ -561,23 +641,33 @@ window.onload = function() {
         enemy.trail = enemyTrail;
     }
     
-    
+    function healthCollide(player, enemy)
+    {
+        enemy.kill();
+        player.health += 40;
+        shields.render();
+    }
+    function wCollide(player, enemy)
+    {
+        enemy.kill();
+        player.weaponLevel = 4;
+    }
     function shipCollide(player, enemy) {
         enemy.kill();
-    
         player.damage(enemy.damageAmount);
         shields.render();
-    
         if (player.alive) {
             var explosion = explosions.getFirstExists(false);
             explosion.reset(player.body.x + player.body.halfWidth, player.body.y + player.body.halfHeight);
             explosion.alpha = 0.7;
             explosion.play('explosion', 30, false, true);
-        } else {
+        } 
+        else {
             playerDeath.x = player.x;
             playerDeath.y = player.y;
             playerDeath.start(false, 1000, 10, 10);
         }
+        
     }
     
     
@@ -591,7 +681,7 @@ window.onload = function() {
         bullet.kill()
     
         // Increase score
-        score += 10 * enemy.damageAmount;
+        score += 200;
         scoreText.render();
     
         //  Pacing
@@ -601,22 +691,26 @@ window.onload = function() {
         if (!blueEnemyLaunched && score > 1000) {
           blueEnemyLaunched = true;
           launchBlueEnemy();
+          luanchHealthPickups();
           //  Slow green enemies down now that there are other enemies
           greenEnemySpacing *= 2;
         }
         if (!yellowEnemyLaunched && score > 10000) {
             yellowEnemyLaunched = true;
             launchYellowEnemy();
+            luanchWeaponPickups();
             greenEnemySpacing *= 2;
           }
         //  Weapon upgrade
         if (score >= 4000 && player.weaponLevel < 2) {
           player.weaponLevel = 2;
-          player.health += 50;
+          player.health += 60;
+          shields.render();
         }
         if (score >= 10000 && player.weaponLevel < 3) {
             player.weaponLevel = 3;
-            player.health += 100;
+            player.health = player.health + 100;
+            shields.render();
           }
     }
     
